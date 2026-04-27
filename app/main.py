@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from app.db.database import test_db
+from app.db.database import Base
+from app.db.database import engine
+
+from app.models.notification import Notification
+
 
 app = FastAPI()
 
@@ -27,3 +32,10 @@ def health():
         "database":db,
         "error":error
     }
+
+@app.on_event("startup")
+def startup():
+
+    Base.metadata.create_all(
+        bind=engine
+    )
