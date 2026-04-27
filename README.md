@@ -1,127 +1,128 @@
-# Event-Driven Notification Service
+# ⚡ Event-Driven Notification Service
 
-Backend orientado a eventos para gestionar notificaciones asíncronas con procesamiento en background.
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Persistence-blue)
+![Redis](https://img.shields.io/badge/Redis-Queue-red)
+![Celery](https://img.shields.io/badge/Celery-Workers-brightgreen)
 
-Construido con una arquitectura sencilla pero realista usando **FastAPI + PostgreSQL + Redis + Celery + Docker**.
+![Demo](docs/notification-demo.gif)
+
+Backend orientado a eventos para gestionar notificaciones asíncronas con procesamiento en background usando colas y workers.
+
+Inspirado en patrones habituales de sistemas distribuidos.
 
 ---
 
-## Arquitectura
+## Highlights
+
+- Async notification processing
+- Redis-backed task queue
+- Celery background workers
+- Persisted state transitions
+- Event-driven backend design
+
+---
+
+## 📌 Descripción
+
+Este proyecto simula un servicio de notificaciones capaz de:
+
+- Recibir solicitudes vía API REST
+- Persistir eventos de notificación
+- Encolar tareas en Redis
+- Procesar trabajos asíncronos con Celery
+- Mantener trazabilidad mediante estados persistidos
+
+Más que una API CRUD, el foco fue construir un servicio pequeño pero representativo de patrones backend reales.
+
+---
+
+## 🧠 Arquitectura
 
 ```text
 Cliente
-  |
-  v
+  ↓
 FastAPI API
-  |
-  | guarda notificación (queued)
-  v
-PostgreSQL
-  |
-  | encola tarea
-  v
-Redis (broker)
-  |
-  v
+  ↓
+PostgreSQL (queued)
+  ↓
+Redis Broker
+  ↓
 Celery Worker
-  |
-  | procesa envío
-  v
-PostgreSQL (status -> processing -> sent/failed)
+  ↓
+processing → sent / failed
 ```
 
 ---
 
-## Features
+## ⚙️ Stack Tecnológico
 
-- API REST con FastAPI
-- Procesamiento asíncrono con Celery
-- Redis como intermediario de mensajes para Celery
-- PostgreSQL para persistencia
-- Estados de ciclo de vida de notificaciones:
-  - queued
-  - processing
-  - sent
-  - failed
-- Docker Compose para entorno local
-- Health check de API + base de datos
-- Tests con Pytest
-- Arquitectura modular separando:
-  - api
-  - db
-  - models
-  - schemas
-  - workers
-
----
-
-## Stack
+### Backend
 
 - Python
 - FastAPI
 - SQLAlchemy
 - PostgreSQL
+
+### Event Processing
+
 - Redis
 - Celery
+
+### Infraestructura
+
 - Docker Compose
 - Pytest
 
 ---
 
-## Estructura del proyecto
+## 📊 Funcionalidades
 
-```bash
-.
-├── app
-│   ├── core/
-│   │   └── config.py
-│   ├── db/
-│   │   └── database.py
-│   ├── models/
-│   │   ├── enums.py
-│   │   └── notification.py
-│   ├── schemas/
-│   │   └── notification.py
-│   ├── workers/
-│   │   ├── celery_app.py
-│   │   └── tasks.py
-│   └── main.py
-│
-├── tests/
-│   └── test_api.py
-│
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
+### Gestión de estados
+
+Cada notificación recorre este ciclo de vida:
+
+```text
+queued
+processing
+sent
+failed
 ```
+
+Esto permite:
+
+- Trazabilidad
+- Auditoría
+- Reintentos futuros
+- Estado observable del sistema
+
+---
+
+### Procesamiento asíncrono
+
+Flujo:
+
+1. La API persiste la notificación
+2. Se encola una tarea en Redis
+3. Celery consume la cola
+4. Worker actualiza estado a processing
+5. Simula el envío
+6. Marca sent o failed
+
+Patrón clásico productor → broker → consumidor.
 
 ---
 
 ## API Endpoints
 
-### Health Check
-
 ```http
-GET /health
-```
-
-Response:
-
-```json
-{
-  "api": "up",
-  "database": "up",
-  "error": null
-}
-```
-
----
-
-## Crear notificación
-
-```http
+GET  /health
 POST /notifications
+GET  /notifications/{notification_id}
 ```
+
+### Crear notificación
 
 Payload:
 
@@ -146,50 +147,25 @@ Response:
 
 ---
 
-## Consultar notificación
+## 🧪 Tests
 
-```http
-GET /notifications/{notification_id}
-```
+Incluye tests para:
 
-Ejemplo:
+- Health endpoint
+- Create notification
+- Get notification
 
-```json
-{
-  "id": "uuid",
-  "user_id": "42",
-  "channel": "email",
-  "status": "sent",
-  "payload": {
-    "message": "hello"
-  }
-}
+Ejecutar:
+
+```bash
+pytest -v
 ```
 
 ---
 
-## Flujo asíncrono
+## ▶️ Ejecución Local
 
-Cuando se crea una notificación:
-
-1. La API la persiste con estado `queued`
-2. Se encola una tarea en Redis
-3. Celery consume la tarea
-4. El worker cambia estado a `processing`
-5. Simula el envío
-6. Marca la notificación como `sent`
-
-Si falla:
-
-```text
-status -> failed
-```
-
----
-
-## Instalación
-
-Clonar repo:
+Clonar:
 
 ```bash
 git clone https://github.com/Marcial-Godes/event-driven-notification-service.git
@@ -201,8 +177,6 @@ Crear entorno virtual:
 ```bash
 python -m venv .venv
 ```
-
-Activar:
 
 Windows:
 
@@ -220,7 +194,7 @@ pip install -r requirements.txt
 
 ## Variables de entorno
 
-Crear `.env` a partir del ejemplo:
+Crear `.env` desde el ejemplo.
 
 Windows:
 
@@ -228,7 +202,7 @@ Windows:
 copy .env.example .env
 ```
 
-Linux/Mac:
+Linux / Mac:
 
 ```bash
 cp .env.example .env
@@ -236,13 +210,13 @@ cp .env.example .env
 
 ---
 
-## Levantar servicios
+## Infraestructura
 
 ```bash
 docker compose up -d
 ```
 
-Servicios:
+Levanta:
 
 - PostgreSQL
 - Redis
@@ -263,7 +237,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## Ejecutar worker
+## Ejecutar Worker
 
 Windows:
 
@@ -273,129 +247,24 @@ celery -A app.workers.tasks worker --pool=solo --loglevel=info
 
 Nota:
 
-En Windows se usa `--pool=solo` por compatibilidad.
-
----
-
-## Tests
+Windows requiere:
 
 ```bash
-pytest -v
-```
-
-Actualmente:
-
-- Health check
-- Create notification
-- Get notification
-
----
-
-## Ejemplo de ejecución
-
-Crear:
-
-```json
-{
- "status": "queued"
-}
-```
-
-Worker:
-
-```text
-Sending notification ...
-Notification ... sent
-```
-
-Consultar después:
-
-```json
-{
- "status": "sent"
-}
+--pool=solo
 ```
 
 ---
 
-## Diseño y decisiones
+## 🛠 Qué demuestra este proyecto
 
-### ¿Por qué UUID?
+Este proyecto pone foco en:
 
-Para sistemas distribuidos suele encajar mejor que ids secuenciales.
-
----
-
-### ¿Por qué Redis + Celery?
-
-Patrón clásico y probado para procesamiento en background.
-
-Simple y robusto.
-
----
-
-### ¿Por qué estados persistidos?
-
-Permiten trazabilidad:
-
-```text
-queued -> processing -> sent
-```
-
-Y si algo falla:
-
-```text
-failed
-```
-
----
-
-## Mejoras futuras
-
-Posibles extensiones:
-
-- Retries automáticos con backoff
-- Dead letter queue
-- Rate limiting
-- Email/SMS providers reales
-- Autenticación
-- Métricas y observabilidad
-- Alembic migrations
-- Dockerización completa de API y worker
-
----
-
-## Ejemplo de ejecución local
-
-Terminal 1:
-
-```bash
-docker compose up -d
-```
-
-Terminal 2:
-
-```bash
-uvicorn app.main:app --reload --reload-exclude .venv
-```
-
-Terminal 3:
-
-```bash
-celery -A app.workers.tasks worker --pool=solo --loglevel=info
-```
-
----
-
-## Estado del proyecto
-
-Proyecto funcional:
-
-- APIs backend
-- procesamiento asíncrono
-- arquitectura orientada a eventos
-- integración con colas
-- workers en background
+- Arquitectura orientada a eventos
+- Queue-based processing
+- Background workers
+- Persistencia de estados
+- Integración API + broker + worker
+- Diseño backend más allá de CRUD
 
 ---
 
