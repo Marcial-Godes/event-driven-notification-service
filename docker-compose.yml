@@ -3,6 +3,7 @@ services:
   postgres:
     image: postgres:16
     container_name: notifications_db
+    restart: unless-stopped
 
     environment:
       POSTGRES_USER: user
@@ -14,6 +15,22 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d notifications"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  redis:
+    image: redis:7
+    container_name: notifications_redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
 
 volumes:
   postgres_data:

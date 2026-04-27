@@ -1,7 +1,18 @@
+# Entornos virtuales
+.venv/
 venv/
+
+# Python
 __pycache__/
+*.pyc
+
+# Tests
 .pytest_cache/
 
-.env/
+# Variables entorno
+.env*
+!.env.example
 
-*.pyc
+# IDE
+.vscode/
+.idea/

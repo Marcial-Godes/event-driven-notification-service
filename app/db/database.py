@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 
@@ -9,20 +10,29 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
+
+# Fábrica de sesiones para cada petición
 SessionLocal = sessionmaker(
-    autocommit=False,
+    bind=engine,
     autoflush=False,
-    bind=engine
+    autocommit=False
 )
 
+
+# Base común para modelos ORM
 Base = declarative_base()
 
 
-def test_db():
+def check_db_connection():
+    # Consulta mínima para validar conectividad
     with engine.connect() as conn:
-        conn.execute(text("SELECT 1"))
+        conn.execute(
+            text("SELECT 1")
+        )
+
 
 def get_db():
+    # Una sesión por request; FastAPI la libera al terminar
     db = SessionLocal()
 
     try:
