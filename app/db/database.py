@@ -4,10 +4,7 @@ from app.core.config import settings
 
 engine = create_engine(
     settings.database_url,
-    pool_pre_ping=True,
-    connect_args={
-        "client_encoding": "utf8"
-    }
+    pool_pre_ping=True
 )
 
 
