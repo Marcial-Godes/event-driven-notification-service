@@ -14,7 +14,7 @@ C:\Users\mazin\Desktop\Python\notification_service\app\db\database.py
 
 C:\Users\mazin\Desktop\Python\notification_service\app\models\notification.py
 
-C:\Users\mazin\Desktop\Python\notification_service\app\schemas\
+C:\Users\mazin\Desktop\Python\notification_service\app\schemas\notification.py
 
 C:\Users\mazin\Desktop\Python\notification_service\app\workers\
 
