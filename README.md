@@ -6,7 +6,7 @@
 ![Redis](https://img.shields.io/badge/Redis-Queue-red)
 ![Celery](https://img.shields.io/badge/Celery-Workers-brightgreen)
 
-![Demo](docs/notification-demo.gif)
+![Demo](docs/Animation.gif)
 
 Backend orientado a eventos para gestionar notificaciones asíncronas con procesamiento en background usando colas y workers.
 
