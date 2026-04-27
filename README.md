@@ -36,7 +36,7 @@ PostgreSQL (status -> processing -> sent/failed)
 
 - API REST con FastAPI
 - Procesamiento asíncrono con Celery
-- Redis como broker y result backend
+- Redis como intermediario de mensajes para Celery
 - PostgreSQL para persistencia
 - Estados de ciclo de vida de notificaciones:
   - queued
@@ -220,17 +220,18 @@ pip install -r requirements.txt
 
 ## Variables de entorno
 
-Crear archivo `.env`
+Crear `.env` a partir del ejemplo:
 
-```env
-APP_ENV=development
+Windows:
 
-DATABASE_URL=postgresql+psycopg://user:pass@localhost:5433/notifications
+```bash
+copy .env.example .env
+```
 
-CELERY_BROKER_URL=redis://localhost:6379/0
-CELERY_RESULT_BACKEND=redis://localhost:6379/0
+Linux/Mac:
 
-SECRET_KEY=change_me
+```bash
+cp .env.example .env
 ```
 
 ---
